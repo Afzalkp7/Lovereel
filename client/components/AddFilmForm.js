@@ -7,26 +7,38 @@ export default function AddFilmForm({ onFilmAdded }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
-        const formData = new FormData();
         const userId = localStorage.getItem("userId");
         if (!userId) {
             setError("User ID missing. Please login again.");
             setLoading(false);
             return;
         }
-        formData.append("userId", userId);
-        formData.append("image", imageFile);
-        formData.append("quote", quote);
 
         try {
-            await axios.post("http://localhost:5000/films", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
+            if (!imageFile) throw new Error("Please select an image");
+
+            const base64Image = await convertToBase64(imageFile);
+
+            await axios.post("/api/films", {
+                userId,
+                imageUrl: base64Image,
+                quote
             });
+
             setImageFile(null);
             setQuote("");
             // Reset file input manually since we don't have a ref

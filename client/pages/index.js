@@ -15,7 +15,7 @@ export default function Home() {
             router.push("/landing");
         } else {
             // Fetch User Status
-            axios.get("http://localhost:5000/auth/me", {
+            axios.get("/api/auth/me", {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(res => setIsPaid(res.data.isPaid))

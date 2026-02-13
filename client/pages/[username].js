@@ -25,7 +25,7 @@ export default function UserReel() {
         const token = localStorage.getItem("token");
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        axios.get(`http://localhost:5000/films/user/${username}`, { headers })
+        axios.get(`/api/films/user/${username}`, { headers })
             .then(res => {
                 // Support both array (old/direct) and object (new with metadata) responses
                 if (Array.isArray(res.data)) {

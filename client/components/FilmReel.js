@@ -18,7 +18,7 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
             return;
         }
 
-        axios.get(`http://localhost:5000/films?userId=${userId}`)
+        axios.get(`/api/films?userId=${userId}`)
             .then(res => {
                 setFilms(res.data);
                 setLoading(false);
@@ -34,7 +34,7 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
         if (!confirm("Delete this memory?")) return;
 
         try {
-            await axios.delete(`http://localhost:5000/films/${id}`);
+            await axios.delete(`/api/films/${id}`);
             setFilms(prev => prev.filter(film => film._id !== id));
         } catch (err) {
             console.error("Failed to delete film:", err);
@@ -81,7 +81,7 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
 
     const handleUnlock = async () => {
         try {
-            const { data: order } = await axios.post("http://localhost:5000/payment/create-order");
+            const { data: order } = await axios.post("/api/payment/create-order");
 
             const options = {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -93,7 +93,7 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
                 handler: async function (response) {
                     try {
                         const userId = localStorage.getItem("userId");
-                        const verifyRes = await axios.post("http://localhost:5000/payment/verify", {
+                        const verifyRes = await axios.post("/api/payment/verify", {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
