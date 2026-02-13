@@ -54,7 +54,13 @@ router.post("/signup", async (req, res) => {
         res.status(201).json({
             success: true,
             token,
-            user: { id: savedUser._id, name: savedUser.name, username: savedUser.username, email: savedUser.email }
+            user: {
+                id: savedUser._id,
+                name: savedUser.name,
+                username: savedUser.username,
+                email: savedUser.email,
+                isPaid: savedUser.isPaid
+            }
         });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -80,9 +86,32 @@ router.post("/login", async (req, res) => {
         res.json({
             success: true,
             token,
-            user: { id: user._id, name: user.name, username: user.username, email: user.email }
+            user: {
+                id: user._id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                isPaid: user.isPaid
+            }
         });
 
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// GET CURRENT USER
+router.get("/me", async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) return res.status(401).json({ message: "No token" });
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

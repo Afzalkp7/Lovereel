@@ -40,8 +40,35 @@ router.get("/user/:username", async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        let isOwner = false;
+
+        // Check for Auth Token (Preview Mode)
+        const token = req.headers.authorization?.split(" ")[1];
+        if (token) {
+            try {
+                // We need to import jwt and process.env.JWT_SECRET (or define it here if reused)
+                // Ideally move JWT_SECRET to a shared config or env
+                const jwt = require("jsonwebtoken");
+                const JWT_SECRET = process.env.JWT_SECRET || "lovereel_secret_key_123";
+
+                const decoded = jwt.verify(token, JWT_SECRET);
+                if (decoded.id === user._id.toString()) {
+                    isOwner = true;
+                }
+            } catch (e) {
+                // Invalid token, ignore (treat as public)
+            }
+        }
+
+        // STRICT LOCK: Check if user has paid OR is owner
+        if (!user.isPaid && !isOwner) {
+            return res.status(403).json({ message: "Reel locked", isLocked: true });
+        }
+
         const films = await Film.find({ user: user._id });
-        res.json(films);
+
+        // If owner but unpaid, we might want to flag it in response so frontend can show "Preview Mode"
+        res.json({ films, isOwner, isPaid: user.isPaid });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

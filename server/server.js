@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const filmRoutes = require("./routes/filmRoute");
 const authRoutes = require("./routes/authRoute");
+const paymentRoutes = require("./routes/paymentRoute");
 
 const app = express();
 
@@ -24,6 +25,7 @@ const path = require("path");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/films", filmRoutes);
 app.use("/auth", authRoutes);
+app.use("/payment", paymentRoutes);
 
 app.get("/", (req, res) => {
     res.send("Server is running!");

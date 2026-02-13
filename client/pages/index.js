@@ -2,17 +2,27 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import FilmReel from "@/components/FilmReel";
 import AddFilmForm from "@/components/AddFilmForm";
+import axios from "axios";
 
 export default function Home() {
     const [refreshKey, setRefreshKey] = useState(0);
+    const [isPaid, setIsPaid] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
             router.push("/landing");
+        } else {
+            // Fetch User Status
+            axios.get("http://localhost:5000/auth/me", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(res => setIsPaid(res.data.isPaid))
+                .catch(err => console.error("Failed to fetch user status", err));
         }
     }, []);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleFilmAdded = () => {
@@ -20,9 +30,18 @@ export default function Home() {
         setIsModalOpen(false);
     };
 
+    const handlePaymentSuccess = () => {
+        setIsPaid(true);
+    };
+
     return (
         <div className="bg-black min-h-screen relative">
-            <FilmReel key={refreshKey} openModal={() => setIsModalOpen(true)} />
+            <FilmReel
+                key={refreshKey}
+                openModal={() => setIsModalOpen(true)}
+                isPaid={isPaid}
+                onPaymentSuccess={handlePaymentSuccess}
+            />
 
             {/* Modal Overlay */}
             {isModalOpen && (

@@ -4,7 +4,7 @@ import axios from "axios";
 import Head from 'next/head';
 import Slideshow from './Slideshow';
 
-export default function FilmReel({ openModal }) {
+export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
     const [films, setFilms] = useState([]);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -60,7 +60,7 @@ export default function FilmReel({ openModal }) {
             localStorage.removeItem("token");
             localStorage.removeItem("userId");
             localStorage.removeItem("username");
-            router.push("/login");
+            router.push("/landing");
         }
     };
 
@@ -77,6 +77,49 @@ export default function FilmReel({ openModal }) {
             console.error("Failed to copy:", err);
             alert("Failed to copy link.");
         });
+    };
+
+    const handleUnlock = async () => {
+        try {
+            const { data: order } = await axios.post("http://localhost:5000/payment/create-order");
+
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                amount: order.amount,
+                currency: order.currency,
+                name: "Lovereel",
+                description: "Unlock your Reel",
+                order_id: order.id,
+                handler: async function (response) {
+                    try {
+                        const userId = localStorage.getItem("userId");
+                        const verifyRes = await axios.post("http://localhost:5000/payment/verify", {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            userId: userId
+                        });
+
+                        if (verifyRes.data.success) {
+                            alert("Payment Successful! Reel Unlocked ❤️");
+                            onPaymentSuccess();
+                        }
+                    } catch (err) {
+                        alert("Payment Verification Failed");
+                        console.error(err);
+                    }
+                },
+                theme: {
+                    color: "#be123c"
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        } catch (err) {
+            console.error("Payment Start Error:", err);
+            alert("Could not start payment.");
+        }
     };
 
     if (loading) return <div>Loading...</div>;
@@ -98,13 +141,24 @@ export default function FilmReel({ openModal }) {
             <h1 className="text-3xl md:text-5xl font-bold mb-8 md:mb-12 font-serif tracking-widest uppercase z-10 text-stone-300 drop-shadow-lg text-center px-4">Lovereel</h1>
 
             <div className="absolute top-6 right-6 z-50 flex gap-4">
-                <button
-                    onClick={handleShare}
-                    className="text-stone-500 hover:text-pink-500 transition-colors"
-                    title="Share Reel"
-                >
-                    🔗
-                </button>
+                {isPaid ? (
+                    <button
+                        onClick={handleShare}
+                        className="text-stone-500 hover:text-pink-500 transition-colors"
+                        title="Share Reel"
+                    >
+                        🔗
+                    </button>
+                ) : (
+                    <button
+                        onClick={handleUnlock}
+                        className="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-full text-sm font-serif italic shadow-lg animate-pulse"
+                        title="Unlock Reel"
+                    >
+                        Unlock (₹19)
+                    </button>
+                )}
+
                 <button
                     onClick={handleLogout}
                     className="text-stone-500 hover:text-rose-500 transition-colors font-serif italic text-lg"

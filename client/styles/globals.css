@@ -5,3 +5,14 @@ body {
     color: white;
     font-family: sans-serif;
 }
+
+@media print {
+    body {
+        display: none !important;
+    }
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+}
