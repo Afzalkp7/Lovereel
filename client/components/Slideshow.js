@@ -92,6 +92,8 @@ export default function Slideshow({ films, onClose }) {
             animationFrameId = requestAnimationFrame(animateScroll);
         };
 
+        if (isUserPaused) return; // Stop the loop if paused
+
         // Initial start
         const container = scrollContainerRef.current;
         if (container && container.firstElementChild && container.firstElementChild.children.length > 0) {
@@ -160,10 +162,8 @@ export default function Slideshow({ films, onClose }) {
 
     return (
         <div
-            className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black select-none touch-manipulation"
-            onPointerDown={() => setIsUserPaused(true)}
-            onPointerUp={() => setIsUserPaused(false)}
-            onPointerLeave={() => setIsUserPaused(false)}
+            className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black select-none touch-manipulation cursor-pointer"
+            onClick={() => setIsUserPaused(!isUserPaused)}
         >
             <Head>
                 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
@@ -307,13 +307,7 @@ export default function Slideshow({ films, onClose }) {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,black_100%)] opacity-60 pointer-events-none"></div>
 
             <div className="absolute top-4 right-4 z-50 flex gap-4 pointer-events-auto">
-                <button
-                    onClick={(e) => { e.stopPropagation(); toggleMute(); }}
-                    className="text-stone-400 hover:text-white text-3xl mix-blend-difference cursor-pointer transition-colors"
-                    title={isMuted ? "Unmute" : "Mute"}
-                >
-                    {isMuted ? "🔇" : "🔊"}
-                </button>
+
                 {onClose && (
                     <button
                         onClick={(e) => { e.stopPropagation(); onClose(); }}
@@ -345,7 +339,7 @@ export default function Slideshow({ films, onClose }) {
                                 if (isActive) {
                                     className += " scale-150 z-50 mx-12 opacity-100 blur-0";
                                     transformStyle = { transform: "perspective(1000px) rotateY(0deg)" };
-                                    contentClass += " w-64 h-48 md:w-80 md:h-60 shadow-white/10";
+                                    contentClass += " w-48 h-36 sm:w-64 sm:h-48 md:w-80 md:h-60 shadow-white/10";
                                     imgClass += " sepia-0 contrast-110 ken-burns-active";
                                 } else {
                                     const rotation = isLeft ? "25deg" : "-25deg";
@@ -356,7 +350,7 @@ export default function Slideshow({ films, onClose }) {
 
                                     className += ` ${scaling} ${opacity} ${blurAmount} z-${40 - dist * 10} mx-[-10px]`;
                                     transformStyle = { transform: `perspective(1000px) rotateY(${rotation})` };
-                                    contentClass += " w-64 h-48 md:w-80 md:h-60 shadow-black";
+                                    contentClass += " w-48 h-36 sm:w-64 sm:h-48 md:w-80 md:h-60 shadow-black";
                                     imgClass += " sepia-[.4] brightness-90";
                                 }
 
@@ -400,22 +394,22 @@ export default function Slideshow({ films, onClose }) {
 
                     {proposalStatus === 'yes' ? (
                         <div className="animate-pop">
-                            <h1 style={{ fontFamily: "'Great Vibes', cursive" }} className="text-6xl md:text-8xl text-pink-500 drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-8 mb-4">
+                            <h1 style={{ fontFamily: "'Great Vibes', cursive" }} className="text-5xl sm:text-6xl md:text-8xl text-pink-500 drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-8 mb-4">
                                 She Said YES!
                             </h1>
-                            <p className="text-3xl md:text-4xl text-white font-serif italic mb-2">“Our story just began…”</p>
+                            <p className="text-2xl md:text-4xl text-white font-serif italic mb-2">“Our story just began…”</p>
                             <p className="text-2xl md:text-3xl text-stone-300 font-serif italic mb-2">“Forever starts today.”</p>
                             <p className="text-2xl md:text-3xl text-rose-400 font-serif italic mb-8">“Best decision of my life.” 💍</p>
                         </div>
                     ) : (
                         <>
-                            <h1 style={{ fontFamily: "'Great Vibes', cursive" }} className="text-6xl md:text-8xl text-red-500 drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-8 mb-4">
+                            <h1 style={{ fontFamily: "'Great Vibes', cursive" }} className="text-4xl sm:text-6xl md:text-8xl text-red-500 drop-shadow-[0_5px_5px_rgba(0,0,0,1)] mt-8 mb-4">
                                 Happy Valentine’s Day
                             </h1>
                             <p className="text-xl md:text-2xl text-stone-300 font-serif italic mb-2">
                                 "In all the world, there is no heart for me like yours."
                             </p>
-                            <p style={{ fontFamily: "'Great Vibes', cursive" }} className="text-4xl md:text-5xl text-white mt-4 mb-12 drop-shadow-lg">
+                            <p style={{ fontFamily: "'Great Vibes', cursive" }} className="text-3xl sm:text-4xl md:text-5xl text-white mt-4 mb-12 drop-shadow-lg">
                                 Will you be my Valentine forever?
                             </p>
                         </>
@@ -450,7 +444,11 @@ export default function Slideshow({ films, onClose }) {
                 </div>
             )}
 
-            {!isUserPaused && !showEnding && <div className="absolute bottom-10 text-stone-500 font-serif italic text-sm animate-pulse z-20 pointer-events-none">Running... Touch & Hold to Pause</div>}
+            {!showEnding && (
+                <div className="absolute bottom-10 text-stone-500 font-serif italic text-sm animate-pulse z-20 pointer-events-none transition-opacity duration-300">
+                    {isUserPaused ? "⏸️ Paused" : "Running... Tap screen to Pause"}
+                </div>
+            )}
         </div>
     );
 }
