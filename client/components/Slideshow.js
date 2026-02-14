@@ -365,7 +365,12 @@ export default function Slideshow({ films, onClose }) {
                                         <div className="real-sprockets"></div>
                                         <div className="bg-black px-2 md:px-4 py-0 flex justify-center">
                                             <div className={contentClass}>
-                                                <img src={film.imageUrl} alt="Memory" className={imgClass} />
+                                                <img
+                                                    src={film.imageUrl}
+                                                    alt="Memory"
+                                                    className={imgClass}
+                                                    style={{ objectPosition: "50% 20%" }}
+                                                />
                                                 <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent transition-opacity duration-1000 flex items-end justify-center p-6 ${isActive ? "opacity-100" : "opacity-0"}`}>
                                                     <p className="text-white text-2xl md:text-3xl text-center whitespace-normal drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] animate-fade-in-up"
                                                         style={{ fontFamily: "'Great Vibes', cursive", textShadow: "0 0 10px rgba(255,255,255,0.3)" }}>

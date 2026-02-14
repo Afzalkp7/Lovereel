@@ -204,6 +204,7 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
                                     src={film.imageUrl}
                                     alt="Memory"
                                     className="w-full h-full object-cover sepia-[.3] contrast-125 hover:sepia-0 transition-all duration-500"
+                                    style={{ objectPosition: "50% 20%" }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2">
                                     <p className="text-stone-200 text-[10px] md:text-xs font-serif italic text-center w-full mb-1">"{film.quote}"</p>
