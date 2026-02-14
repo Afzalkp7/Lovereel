@@ -71,6 +71,8 @@ export default function Slideshow({ films, onClose }) {
     }, [activeSlideIndex, isUserPaused, showEnding, films.length]);
 
     const handleTap = (e) => {
+        if (showEnding) return;
+
         const now = Date.now();
         const timeSinceLastTap = now - lastTapRef.current;
 
@@ -152,9 +154,13 @@ export default function Slideshow({ films, onClose }) {
 
 
 
-    const handleYes = () => setProposalStatus('yes');
+    const handleYes = (e) => {
+        e.stopPropagation();
+        setProposalStatus('yes');
+    };
 
     const handleNo = (e) => {
+        e.stopPropagation();
         e.target.innerText = "Try 'Yes' 😉";
         e.target.style.transform = `translate(${Math.random() * 50 - 25}px, ${Math.random() * 50 - 25}px)`;
     };
@@ -372,7 +378,7 @@ export default function Slideshow({ films, onClose }) {
                 <div className="w-full relative flex items-center py-12 z-10 perspective-[1000px] sepia-[0.2] contrast-[1.1] brightness-[0.9] pointer-events-none">
                     <div
                         ref={scrollContainerRef}
-                        className="flex overflow-x-hidden whitespace-nowrap w-full no-scrollbar px-[50vw]"
+                        className="flex overflow-x-hidden whitespace-nowrap w-full no-scrollbar"
                     >
                         <div className="inline-flex items-center py-12 px-[50vw]">
                             {films.map((film, index) => {
@@ -435,6 +441,7 @@ export default function Slideshow({ films, onClose }) {
                 <div
                     className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 animate-fade-in px-4 text-center pointer-events-auto"
                     onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                 >
 
                     <div className="text-[150px] md:text-[200px] text-red-600 animate-heartbeat drop-shadow-[0_0_50px_rgba(220,38,38,0.8)] transition-transform duration-500">
