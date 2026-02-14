@@ -99,17 +99,17 @@ export default function UserReel() {
                         </div>
                     )}
 
-                    <div className="z-10 text-center p-8">
-                        <h1 className="text-5xl md:text-7xl font-bold mb-8 text-rose-500 font-[Great Vibes] drop-shadow-lg animate-pulse">
+                    <div className="z-10 text-center p-4 md:p-8 w-full max-w-2xl px-4">
+                        <h1 className="text-4xl md:text-7xl font-bold mb-6 md:mb-8 text-rose-500 font-[Great Vibes] drop-shadow-lg animate-pulse leading-tight">
                             A Special Gift
                         </h1>
-                        <p className="text-stone-300 mb-12 text-lg italic">
+                        <p className="text-stone-300 mb-8 md:mb-12 text-base md:text-lg italic px-4">
                             {username ? `For ${username}'s Valentine` : "For you"}
                         </p>
 
                         <button
                             onClick={handleStart}
-                            className="bg-rose-700 hover:bg-rose-600 text-white px-8 py-4 rounded-full text-xl font-serif italic shadow-2xl hover:scale-105 transition-all animate-bounce"
+                            className="bg-rose-700 hover:bg-rose-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-lg md:text-xl font-serif italic shadow-2xl hover:scale-105 transition-all animate-bounce w-full md:w-auto"
                         >
                             Yes, Show Me! 🎁
                         </button>

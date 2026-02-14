@@ -140,11 +140,11 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
 
             <h1 className="text-3xl md:text-5xl font-bold mb-8 md:mb-12 font-serif tracking-widest uppercase z-10 text-stone-300 drop-shadow-lg text-center px-4">Lovereel</h1>
 
-            <div className="absolute top-6 right-6 z-50 flex gap-4">
+            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex gap-2 md:gap-4">
                 {isPaid ? (
                     <button
                         onClick={handleShare}
-                        className="text-stone-500 hover:text-pink-500 transition-colors"
+                        className="text-stone-500 hover:text-pink-500 transition-colors p-2"
                         title="Share Reel"
                     >
                         🔗
@@ -152,7 +152,7 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
                 ) : (
                     <button
                         onClick={handleUnlock}
-                        className="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-full text-sm font-serif italic shadow-lg animate-pulse"
+                        className="bg-rose-700 hover:bg-rose-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-serif italic shadow-lg animate-pulse"
                         title="Unlock Reel"
                     >
                         Unlock (₹19)
@@ -161,7 +161,7 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
 
                 <button
                     onClick={handleLogout}
-                    className="text-stone-500 hover:text-rose-500 transition-colors font-serif italic text-lg"
+                    className="text-stone-500 hover:text-rose-500 transition-colors font-serif italic text-sm md:text-lg"
                     title="Logout"
                 >
                     Logout
@@ -190,12 +190,12 @@ export default function FilmReel({ openModal, isPaid, onPaymentSuccess }) {
             )}
 
             <div className="w-full overflow-x-auto pb-8 z-10 no-scrollbar">
-                <div className="inline-flex items-center space-x-0 bg-black border-y-[8px] md:border-y-[12px] border-dashed border-stone-800 py-4 px-4 md:px-12 min-w-full">
+                <div className="inline-flex items-center space-x-0 bg-black border-y-[4px] md:border-y-[12px] border-dashed border-stone-800 py-2 md:py-4 px-2 md:px-12 min-w-full">
                     {films.length === 0 && (
                         <div className="w-full text-center text-stone-500 italic p-8 text-sm md:text-base">No films yet. Add one to start your reel!</div>
                     )}
                     {films.map((film, index) => (
-                        <div key={film._id} className="flex-shrink-0 relative group">
+                        <div key={film._id} className="flex-shrink-0 relative group px-1">
                             <div
                                 onClick={() => { setCurrentIndex(index); }}
                                 className="w-48 h-36 md:w-64 md:h-48 bg-black border-2 md:border-4 border-black outline outline-1 md:outline-2 outline-stone-700 relative overflow-hidden transition-transform duration-300 hover:scale-105 hover:z-20 cursor-pointer"

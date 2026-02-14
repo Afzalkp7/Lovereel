@@ -95,20 +95,20 @@ export default function Landing() {
             />
 
             {/* Navigation */}
-            <nav className="relative z-10 px-6 py-6 flex justify-between items-center max-w-7xl mx-auto">
+            <nav className="relative z-10 px-4 md:px-6 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4 md:gap-0">
                 <div className="handwritten text-4xl text-rose-600 drop-shadow-sm">
                     Love Reel
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-3 md:gap-4">
                     <button
                         onClick={() => router.push("/login")}
-                        className="sans px-6 py-2 text-stone-700 hover:text-rose-600 transition-colors font-medium"
+                        className="sans px-4 py-2 text-stone-700 hover:text-rose-600 transition-colors font-medium text-sm md:text-base"
                     >
                         Login
                     </button>
                     <button
                         onClick={() => router.push("/signup")}
-                        className="sans px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-full hover:from-rose-600 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 font-medium"
+                        className="sans px-5 py-2 md:px-6 md:py-3 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-full hover:from-rose-600 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-sm md:text-base"
                     >
                         Sign Up Free
                     </button>
@@ -116,47 +116,47 @@ export default function Landing() {
             </nav>
 
             {/* Hero Section */}
-            <main className="relative z-10 max-w-5xl mx-auto px-6 pt-20 pb-32 text-center">
+            <main className="relative z-10 max-w-5xl mx-auto px-4 pt-12 md:px-6 md:pt-20 pb-20 md:pb-32 text-center">
                 {/* Main Heading */}
                 <div className="animate-fadeInUp" style={{ animationDelay: '0.1s', opacity: 0 }}>
-                    <h1 className="text-7xl md:text-8xl mb-6">
-                        <span className="text-stone-700 serif font-semibold">Turn Your </span>
-                        <span className="handwritten text-rose-600 text-8xl md:text-9xl">Love</span>
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl mb-4 md:mb-6">
+                        <span className="text-stone-700 serif font-semibold block md:inline">Turn Your </span>
+                        <span className="handwritten text-rose-600 text-6xl md:text-8xl lg:text-9xl ml-2">Love</span>
                     </h1>
-                    <h1 className="text-7xl md:text-8xl text-stone-700 serif font-semibold mb-8">
+                    <h1 className="text-4xl md:text-7xl lg:text-8xl text-stone-700 serif font-semibold mb-6 md:mb-8">
                         Into a Film Reel
                     </h1>
                 </div>
 
                 {/* Subtitle */}
                 <div className="animate-fadeInUp" style={{ animationDelay: '0.3s', opacity: 0 }}>
-                    <p className="serif italic text-2xl md:text-3xl text-stone-600 mb-4 max-w-3xl mx-auto leading-relaxed">
+                    <p className="serif italic text-lg md:text-2xl lg:text-3xl text-stone-600 mb-4 max-w-3xl mx-auto leading-relaxed px-4">
                         Transform your cherished photos into a
-                        <span className="handwritten text-rose-500 text-4xl mx-2 not-italic">romantic slideshow</span>
+                        <span className="handwritten text-rose-500 text-3xl md:text-4xl mx-2 not-italic block md:inline mt-2 md:mt-0">romantic slideshow</span>
                     </p>
-                    <p className="serif text-xl text-stone-500 mb-12 max-w-2xl mx-auto">
+                    <p className="serif text-lg md:text-xl text-stone-500 mb-10 md:mb-12 max-w-2xl mx-auto px-4">
                         with beautiful quotes, music, and cinematic effects
                     </p>
                 </div>
 
                 {/* CTA Button */}
-                <div className="animate-fadeInUp mb-16" style={{ animationDelay: '0.5s', opacity: 0 }}>
+                <div className="animate-fadeInUp mb-12 md:mb-16" style={{ animationDelay: '0.5s', opacity: 0 }}>
                     <button
                         onClick={() => router.push("/signup")}
-                        className="sans group relative px-12 py-5 bg-gradient-to-r from-rose-600 to-pink-600 text-white text-lg font-semibold rounded-full shadow-2xl hover:shadow-rose-500/50 transition-all transform hover:scale-105 active:scale-95"
+                        className="sans group relative px-8 py-4 md:px-12 md:py-5 bg-gradient-to-r from-rose-600 to-pink-600 text-white text-base md:text-lg font-semibold rounded-full shadow-2xl hover:shadow-rose-500/50 transition-all transform hover:scale-105 active:scale-95"
                     >
-                        <span className="flex items-center gap-3">
+                        <span className="flex items-center gap-2 md:gap-3">
                             Create Your Love Reel
-                            <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                            <span className="text-xl md:text-2xl group-hover:translate-x-1 transition-transform">→</span>
                         </span>
                     </button>
-                    <p className="sans text-sm text-stone-500 mt-4">
+                    <p className="sans text-xs md:text-sm text-stone-500 mt-4">
                         Free • No credit card required • Share as video or GIF
                     </p>
                 </div>
 
                 {/* Feature Cards */}
-                <div className="grid md:grid-cols-3 gap-6 mt-20 animate-fadeInUp" style={{ animationDelay: '0.7s', opacity: 0 }}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 md:mt-20 animate-fadeInUp px-4 md:px-0" style={{ animationDelay: '0.7s', opacity: 0 }}>
                     {[
                         {
                             icon: "📸",

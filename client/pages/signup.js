@@ -89,11 +89,11 @@ export default function Signup() {
                 }
             `}</style>
 
-            <div className="glass-card p-8 md:p-12 rounded-2xl w-full max-w-md mx-4 text-center relative z-10 transition-transform duration-300">
-                <h1 style={{ fontFamily: "'Great Vibes', cursive" }} className="text-4xl md:text-5xl text-white mb-2 drop-shadow-lg">
+            <div className="glass-card p-6 md:p-12 rounded-2xl w-full max-w-sm md:max-w-md mx-4 text-center relative z-10 transition-transform duration-300">
+                <h1 style={{ fontFamily: "'Great Vibes', cursive" }} className="text-3xl md:text-5xl text-white mb-2 drop-shadow-lg">
                     Start Your Story
                 </h1>
-                <p className="text-stone-400 font-serif italic mb-8 text-sm md:text-base">
+                <p className="text-stone-400 font-serif italic mb-6 md:mb-8 text-xs md:text-base">
                     Create a reel for your special one.
                 </p>
 

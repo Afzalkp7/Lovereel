@@ -55,7 +55,7 @@ export default function AddFilmForm({ onFilmAdded }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="w-full bg-gray-900/90 border border-red-900/30 p-8 rounded-xl shadow-2xl backdrop-blur-md">
+        <form onSubmit={handleSubmit} className="w-full bg-gray-900/90 border border-red-900/30 p-4 md:p-8 rounded-xl shadow-2xl backdrop-blur-md max-h-[80vh] overflow-y-auto">
             <h3 className="text-xl text-red-100 mb-4 font-serif italic">Add to Reel</h3>
 
             {error && <p className="text-red-500 mb-3 text-sm">{error}</p>}
