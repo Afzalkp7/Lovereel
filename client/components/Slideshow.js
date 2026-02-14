@@ -16,6 +16,22 @@ export default function Slideshow({ films, onClose }) {
         activeIndexRef.current = activeSlideIndex;
     }, [activeSlideIndex]);
 
+    // Initial Scroll Setup
+    useEffect(() => {
+        // Give a small delay to ensure DOM is ready
+        const timer = setTimeout(() => {
+            const container = scrollContainerRef.current;
+            if (container && container.firstElementChild && container.firstElementChild.children.length > 0) {
+                const item = container.firstElementChild.children[0];
+                if (item) {
+                    const center = item.offsetLeft + (item.offsetWidth / 2) - (container.clientWidth / 2);
+                    container.scrollLeft = center;
+                }
+            }
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [films.length]);
+
     // Music Control
     useEffect(() => {
         if (musicRef.current) {
@@ -35,6 +51,17 @@ export default function Slideshow({ films, onClose }) {
             }
         };
     }, []);
+
+    // Pause/Play music on user interaction
+    useEffect(() => {
+        if (musicRef.current) {
+            if (isUserPaused) {
+                musicRef.current.pause();
+            } else {
+                musicRef.current.play().catch(() => { });
+            }
+        }
+    }, [isUserPaused]);
 
     // Animation Loop
     useEffect(() => {
@@ -94,17 +121,10 @@ export default function Slideshow({ films, onClose }) {
 
         if (isUserPaused) return; // Stop the loop if paused
 
-        // Initial start
-        const container = scrollContainerRef.current;
-        if (container && container.firstElementChild && container.firstElementChild.children.length > 0) {
-            const item = container.firstElementChild.children[0];
-            if (item) {
-                const center = item.offsetLeft + (item.offsetWidth / 2) - (container.clientWidth / 2);
-                setTimeout(() => container.scrollLeft = center, 50);
-            }
-        }
-
+        // Start the loop
         timeoutId = setTimeout(scrollStep, 6000);
+
+
 
         return () => {
             clearTimeout(timeoutId);
