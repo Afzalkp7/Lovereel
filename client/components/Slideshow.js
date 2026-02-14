@@ -11,10 +11,96 @@ export default function Slideshow({ films, onClose }) {
     const scrollContainerRef = useRef(null);
     const activeIndexRef = useRef(0);
     const musicRef = useRef(null);
+    const timerRef = useRef(null);
+    const lastTapRef = useRef(0);
 
+    // Keep ref in sync
     useEffect(() => {
         activeIndexRef.current = activeSlideIndex;
     }, [activeSlideIndex]);
+
+    // Helper: Smooth Scroll
+    const scrollToSlide = (index) => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const track = container.firstElementChild;
+        if (!track || !track.children[index]) return;
+
+        const item = track.children[index];
+        const center = item.offsetLeft + (item.offsetWidth / 2) - (container.clientWidth / 2);
+
+        const start = container.scrollLeft;
+        const change = center - start;
+        const duration = 1000;
+        const startTime = performance.now();
+
+        const animateScroll = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            let progress = elapsed / duration;
+            if (progress > 1) progress = 1;
+
+            const ease = progress < 0.5
+                ? 2 * progress * progress
+                : -1 + (4 - 2 * progress) * progress;
+
+            container.scrollLeft = start + change * ease;
+
+            if (progress < 1) requestAnimationFrame(animateScroll);
+        };
+        requestAnimationFrame(animateScroll);
+    };
+
+    // Effect: Handle Active Slide Change (Visuals)
+    useEffect(() => {
+        scrollToSlide(activeSlideIndex);
+    }, [activeSlideIndex]);
+
+    // Effect: Auto-Advance Timer
+    useEffect(() => {
+        if (isUserPaused || showEnding) return;
+
+        timerRef.current = setTimeout(() => {
+            if (activeSlideIndex < films.length - 1) {
+                setActiveSlideIndex(prev => prev + 1);
+            } else {
+                setShowEnding(true);
+            }
+        }, 6000);
+
+        return () => clearTimeout(timerRef.current);
+    }, [activeSlideIndex, isUserPaused, showEnding, films.length]);
+
+    const handleTap = (e) => {
+        const now = Date.now();
+        const timeSinceLastTap = now - lastTapRef.current;
+
+        if (timeSinceLastTap < 300) {
+            // Double Tap Detected
+            const screenWidth = window.innerWidth;
+            const clickX = e.clientX;
+
+            if (clickX > screenWidth / 2) {
+                // Next
+                if (activeSlideIndex < films.length - 1) {
+                    setActiveSlideIndex(prev => prev + 1);
+                } else {
+                    setShowEnding(true);
+                }
+            } else {
+                // Previous
+                if (activeSlideIndex > 0) {
+                    setActiveSlideIndex(prev => prev - 1);
+                }
+            }
+            // Reset pausing state to ensure smooth flow if desired, or keep user preference
+            // setIsUserPaused(false); // Uncomment to auto-resume on skip
+        } else {
+            // Single Tap: Toggle Pause
+            setIsUserPaused(!isUserPaused);
+        }
+
+        lastTapRef.current = now;
+    };
 
     // Initial Scroll Setup
     useEffect(() => {
@@ -63,74 +149,7 @@ export default function Slideshow({ films, onClose }) {
         }
     }, [isUserPaused]);
 
-    // Animation Loop
-    useEffect(() => {
-        let timeoutId;
-        let animationFrameId;
 
-        const scrollStep = () => {
-            if (isUserPaused || showEnding) { // Stop scrolling if ending
-                if (isUserPaused) timeoutId = setTimeout(scrollStep, 500);
-                return;
-            }
-
-            if (scrollContainerRef.current) {
-                const container = scrollContainerRef.current;
-                const track = container.firstElementChild; // The inner div
-                if (!track || track.children.length === 0) return;
-
-                const items = track.children;
-                let nextIndex = activeIndexRef.current + 1;
-
-                if (nextIndex >= items.length) {
-                    setShowEnding(true);
-                    return;
-                }
-
-                setActiveSlideIndex(nextIndex);
-
-                const nextItem = items[nextIndex];
-                if (nextItem) {
-                    const targetScroll = nextItem.offsetLeft + (nextItem.offsetWidth / 2) - (container.clientWidth / 2);
-                    smoothScrollTo(container, targetScroll, 1000);
-                }
-            }
-            timeoutId = setTimeout(scrollStep, 6000);
-        };
-
-        const smoothScrollTo = (element, target, duration) => {
-            const start = element.scrollLeft;
-            const change = target - start;
-            const startTime = performance.now();
-
-            const animateScroll = (currentTime) => {
-                const elapsed = currentTime - startTime;
-                let progress = elapsed / duration;
-                if (progress > 1) progress = 1;
-
-                const ease = progress < 0.5
-                    ? 2 * progress * progress
-                    : -1 + (4 - 2 * progress) * progress;
-
-                element.scrollLeft = start + change * ease;
-
-                if (progress < 1) animationFrameId = requestAnimationFrame(animateScroll);
-            };
-            animationFrameId = requestAnimationFrame(animateScroll);
-        };
-
-        if (isUserPaused) return; // Stop the loop if paused
-
-        // Start the loop
-        timeoutId = setTimeout(scrollStep, 6000);
-
-
-
-        return () => {
-            clearTimeout(timeoutId);
-            cancelAnimationFrame(animationFrameId);
-        };
-    }, [films.length, isUserPaused, showEnding]);
 
 
     const handleYes = () => setProposalStatus('yes');
@@ -141,17 +160,26 @@ export default function Slideshow({ films, onClose }) {
     };
 
     const replayReel = () => {
+        setIsUserPaused(false);
         setActiveSlideIndex(0);
         setShowEnding(false);
         setProposalStatus(null);
-        if (scrollContainerRef.current) {
-            const container = scrollContainerRef.current;
-            const item = container.firstElementChild?.children[0];
-            if (item) {
-                const center = item.offsetLeft + (item.offsetWidth / 2) - (container.clientWidth / 2);
-                container.scrollLeft = center;
+
+        // Use a timeout to allow the DOM to update (removing ending screen) before scrolling
+        setTimeout(() => {
+            if (scrollContainerRef.current) {
+                const container = scrollContainerRef.current;
+                // Force scroll to start immediately
+                container.scrollLeft = 0;
+
+                const item = container.firstElementChild?.children[0];
+                if (item) {
+                    const center = item.offsetLeft + (item.offsetWidth / 2) - (container.clientWidth / 2);
+                    container.scrollLeft = center;
+                }
             }
-        }
+        }, 100);
+
         if (musicRef.current) {
             musicRef.current.currentTime = 0;
             musicRef.current.play().catch(() => { });
@@ -183,7 +211,8 @@ export default function Slideshow({ films, onClose }) {
     return (
         <div
             className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black select-none touch-manipulation cursor-pointer"
-            onClick={() => setIsUserPaused(!isUserPaused)}
+
+            onClick={handleTap}
         >
             <Head>
                 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
@@ -467,6 +496,28 @@ export default function Slideshow({ films, onClose }) {
             {!showEnding && (
                 <div className="absolute bottom-10 text-stone-500 font-serif italic text-sm animate-pulse z-20 pointer-events-none transition-opacity duration-300">
                     {isUserPaused ? "⏸️ Paused" : "Running... Tap screen to Pause"}
+                </div>
+            )}
+
+            {!showEnding && (
+                <div className="absolute bottom-20 left-0 right-0 z-50 px-8 md:px-20 flex items-center justify-center gap-2 pointer-events-auto"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {films.map((_, idx) => (
+                        <div
+                            key={idx}
+                            onClick={() => {
+                                setActiveSlideIndex(idx);
+                                setIsUserPaused(false);
+                            }}
+                            className={`rounded-full transition-all duration-300 cursor-pointer shadow-lg ${idx === activeSlideIndex
+                                ? "bg-white w-3 h-3 scale-125 shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                                : idx < activeSlideIndex
+                                    ? "bg-rose-500/80 w-2 h-2 hover:scale-125"
+                                    : "bg-white/30 w-2 h-2 hover:bg-white/60 hover:scale-125"
+                                }`}
+                        />
+                    ))}
                 </div>
             )}
         </div>
